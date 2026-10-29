@@ -119,37 +119,44 @@ public class Quaternion {
          if (pos < s.length() && (s.charAt (pos) == '+' || s.charAt (pos) == '-')) {
             pos++;
          } else if (p > 0) {
-            throw parseError (s, pos, "expected '+' or '-' before the " + partName);
+            throw new IllegalArgumentException (errorMessage (s, pos,
+               "expected '+' or '-' before the " + partName));
          }
-         pos = skipNumber (s, pos, partName);
+         int end = numberEnd (s, pos);
+         if (end < 0)
+            throw new IllegalArgumentException (errorMessage (s, pos,
+               "expected the " + partName + " as a decimal number "
+               + "digits[.digits][e[+|-]digits]"));
+         pos = end;
          String number = s.substring (start, pos);
          parts[p] = Double.parseDouble (number);
          if (Double.isInfinite (parts[p]))
-            throw parseError (s, start, "number \"" + number + "\" (" + partName
-               + ") is out of the range of double");
+            throw new IllegalArgumentException (errorMessage (s, start,
+               "number \"" + number + "\" (" + partName
+               + ") is out of the range of double"));
          if (p > 0) {
             if (pos >= s.length() || s.charAt (pos) != UNITS[p].charAt (0))
-               throw parseError (s, pos, "expected '" + UNITS[p] + "' after the "
-                  + partName);
+               throw new IllegalArgumentException (errorMessage (s, pos,
+                  "expected '" + UNITS[p] + "' after the " + partName));
             pos++;
          }
       }
       if (pos < s.length())
-         throw parseError (s, pos, "unexpected trailing characters \""
-            + s.substring (pos) + "\"");
+         throw new IllegalArgumentException (errorMessage (s, pos,
+            "unexpected trailing characters \"" + s.substring (pos) + "\""));
       return new Quaternion (parts[0], parts[1], parts[2], parts[3]);
    }
 
-   /** Skips an unsigned decimal number with an optional exponent,
+   /** Finds the end of an unsigned decimal number with an optional exponent,
     * i.e. digits[.digits][(e|E)[+|-]digits], where either the integer or
     * the fractional digits may be missing, but not both.
+    * Does not throw, the caller reports the error.
     * @param s string being parsed
     * @param pos index where the number starts
-    * @param partName name of the part being read, used in error messages
-    * @return index right after the number
-    * @throws IllegalArgumentException if there is no valid number at pos
+    * @return index right after the number, or -1 if there is no valid
+    *     number at pos
     */
-   private static int skipNumber (String s, int pos, String partName) {
+   private static int numberEnd (String s, int pos) {
       int digitsStart = pos;
       pos = skipDigits (s, pos);
       int digits = pos - digitsStart;
@@ -159,7 +166,7 @@ public class Quaternion {
          digits += pos - fractionStart;
       }
       if (digits == 0)
-         throw parseError (s, digitsStart, "expected digits of the " + partName);
+         return -1;
       if (pos < s.length() && (s.charAt (pos) == 'e' || s.charAt (pos) == 'E')) {
          pos++;
          if (pos < s.length() && (s.charAt (pos) == '+' || s.charAt (pos) == '-'))
@@ -167,8 +174,7 @@ public class Quaternion {
          int exponentStart = pos;
          pos = skipDigits (s, pos);
          if (pos == exponentStart)
-            throw parseError (s, pos, "expected digits of the exponent of the "
-               + partName);
+            return -1;
       }
       return pos;
    }
@@ -184,19 +190,18 @@ public class Quaternion {
       return pos;
    }
 
-   /** Builds an exception describing a syntax error in valueOf input.
+   /** Composes the text of a syntax error in valueOf input.
     * @param s whole input string
     * @param pos index of the error
     * @param problem description of the error
-    * @return exception to be thrown
+    * @return error message
     */
-   private static IllegalArgumentException parseError (String s, int pos,
-                                                       String problem) {
+   private static String errorMessage (String s, int pos, String problem) {
       String found = pos < s.length()
          ? "found '" + s.charAt (pos) + "'" : "reached end of string";
-      return new IllegalArgumentException ("Cannot convert \"" + s
-         + "\" to a quaternion: " + problem + " at index " + pos + ", "
-         + found + " (expected form a+bi+cj+dk, e.g. -1.5-2.0i+3.0e-4j-4.0k)");
+      return "Cannot convert \"" + s + "\" to a quaternion: " + problem
+         + " at index " + pos + ", " + found
+         + " (expected form a+bi+cj+dk, e.g. -1.5-2.0i+3.0e-4j-4.0k)";
    }
 
    /** Clone of the quaternion.
