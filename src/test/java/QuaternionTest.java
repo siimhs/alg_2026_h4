@@ -41,14 +41,14 @@ public class QuaternionTest {
    @Test (timeout=1000)
    public void testToString() {
       String s = new Quaternion (1., 4., 5., 7.).toString();
-      assertTrue ("String <" + s + "> does not represent 1+4i+5j+7k", 
+      assertTrue ("String <" + s + "> does not represent 1+4i+5j+7k",
          (s.indexOf('1') < s.indexOf('4')) && (s.indexOf('1') >= 0)
-          && (s.indexOf('4') < s.indexOf('5')) && 
+          && (s.indexOf('4') < s.indexOf('5')) &&
           (s.indexOf('5') < s.indexOf('7')));
       s = new Quaternion (-1., 5., 0., 0.).toString();
-      assertTrue ("String <" + s + "> does not contain a minus", 
+      assertTrue ("String <" + s + "> does not contain a minus",
          s.indexOf('-') >= 0);
-   } 
+   }
 
    @Test (timeout=1000)
    public void testValueOf() {
@@ -94,14 +94,14 @@ public class QuaternionTest {
          k3.equals(k1));
       assertTrue ("clone must be equal to original", k3.equals(k4));
       assertFalse ("clone must not be identical to original", k3 == k4);
-      assertTrue ("zero must satisfy isZero", 
+      assertTrue ("zero must satisfy isZero",
          new Quaternion (0., 0., 0., 0.).isZero());
-      assertTrue ("number created from parts must be equal to original", 
-         k2.equals (new Quaternion (k2.getRpart(), 
+      assertTrue ("number created from parts must be equal to original",
+         k2.equals (new Quaternion (k2.getRpart(),
             k2.getIpart(), k2.getJpart(), k2.getKpart())));
-      Quaternion k5 = new Quaternion (3.000000000000001, 7.000000000000001, 
+      Quaternion k5 = new Quaternion (3.000000000000001, 7.000000000000001,
          5., 2.);
-      assertTrue ("cannot compare real numbers using == operator", 
+      assertTrue ("cannot compare real numbers using == operator",
          k5.equals (k1));
    }
 
@@ -136,7 +136,7 @@ public class QuaternionTest {
       f1 = new Quaternion (0., 0., 0., 0.);
       try {
          f2 = (Quaternion)f1.clone();
-      } catch (CloneNotSupportedException e) {};   
+      } catch (CloneNotSupportedException e) {};
       assertNotSame ("clone must differ from original", f2, f1);
       assertEquals ("clone must be equal to original", f1, f2);
    }
@@ -172,7 +172,7 @@ public class QuaternionTest {
    }
 
    @Test (timeout=1000)
-   public void testPlus() { 
+   public void testPlus() {
       Quaternion f1 = new Quaternion (2., 5., 1., 3.);
       Quaternion f2 = new Quaternion (4., 15., 2., 7.);
       Quaternion sum = f1.plus(f2);
@@ -260,7 +260,7 @@ public class QuaternionTest {
       prd = f2.times (f1);
       assertEquals ("Wrong product: <" + f2 + "> * <" + f1 + ">",
          new Quaternion (2., 3., 4., 5.), prd);
-   } 
+   }
 
    @Test (timeout=1000)
    public void testTimesR() {
@@ -271,8 +271,8 @@ public class QuaternionTest {
       assertEquals ("Do not change the first argument of times",
          new Quaternion (2., 3., 5., 7.), f);
       prd = f.times (-20.);
-      assertEquals ("Wrong product: <" + f + "> * 20",                                               
-         new Quaternion (-40., -60., -100., -140.), prd); 
+      assertEquals ("Wrong product: <" + f + "> * 20",
+         new Quaternion (-40., -60., -100., -140.), prd);
    }
 
    @Test (timeout=1000)
@@ -428,7 +428,7 @@ public class QuaternionTest {
       Quaternion yks = new Quaternion (1., 0., 0., 0.);
       if (!(c.divideByRight(c).equals(yks)))
          return false;
-      if (!(c.divideByLeft(c).equals(yks)))                                                           
+      if (!(c.divideByLeft(c).equals(yks)))
          return false;
       if (!(c.times(c.inverse()).equals(yks)))
          return false;
@@ -472,16 +472,16 @@ public class QuaternionTest {
       assertTrue ("hashCode has to be same for the same object", h1 == q1.hashCode());
       q2 = new Quaternion (0., 2., 3., 4.);
       h2 = q2.hashCode();
-      q3 = new Quaternion (1., 0., 3., 4.);                                                            
+      q3 = new Quaternion (1., 0., 3., 4.);
       h3 = q3.hashCode();
       Quaternion q4 = new Quaternion (1., 2., 0., 4.);
       int h4 = q4.hashCode();
-      Quaternion q5 = new Quaternion (1., 2., 3., 0.);                                                 
+      Quaternion q5 = new Quaternion (1., 2., 3., 0.);
       int h5 = q5.hashCode();
       assertFalse ("hashCode does not depend on real part", h1 == h2);
       assertFalse ("hashCode does not depend on imaginary part i", h1 == h3);
-      assertFalse ("hashCode does not depend on imaginary part j", h1 == h4); 
-      assertFalse ("hashCode does not depend on imaginary part k", h1 == h5); 
+      assertFalse ("hashCode does not depend on imaginary part j", h1 == h4);
+      assertFalse ("hashCode does not depend on imaginary part k", h1 == h5);
    }
 
    @Test (timeout=1000)
@@ -490,7 +490,7 @@ public class QuaternionTest {
       int h1 = q1.hashCode();
       Quaternion q2 = new Quaternion (1., 2., 4., 3.);
       int h2 = q2.hashCode();
-      assertFalse ("hashCode must not be symmetrical: " 
+      assertFalse ("hashCode must not be symmetrical: "
          + q1 + " and " + q2 + " both give " + h1,
          h1 == h2);
       q2 = new Quaternion (1., 3., 2., 4.);
@@ -605,5 +605,83 @@ public class QuaternionTest {
          h1 == h2);
    }
 
-}
+   @Test (timeout=1000)
+   public void testPowZero() {
+      Quaternion f = new Quaternion (1., 2., 3., 4.);
+      assertEquals ("1+2i+3j+4k to the power 0 must be 1",
+         new Quaternion (1., 0., 0., 0.), f.pow (0));
+      f = new Quaternion (-5., 0.5, -7., 13.);
+      assertEquals ("-5+0.5i-7j+13k to the power 0 must be 1",
+         new Quaternion (1., 0., 0., 0.), f.pow (0));
+      f = new Quaternion (0., 0., 0., 0.);
+      assertEquals ("0 to the power 0 must be 1",
+         new Quaternion (1., 0., 0., 0.), f.pow (0));
+   }
 
+   @Test (timeout=1000)
+   public void testPowOne() {
+      Quaternion f = new Quaternion (1., 2., 3., 4.);
+      Quaternion res = f.pow (1);
+      assertEquals ("1+2i+3j+4k to the power 1 must be equal to itself",
+         new Quaternion (1., 2., 3., 4.), res);
+      assertNotSame ("pow(1) must return a new object", f, res);
+      assertEquals ("Do not change the argument of pow",
+         new Quaternion (1., 2., 3., 4.), f);
+   }
+
+   @Test (timeout=1000)
+   public void testPowMinusOne() {
+      Quaternion f = new Quaternion (1., 2., 3., 4.);
+      assertEquals ("1+2i+3j+4k to the power -1 is wrong",
+         new Quaternion (1./30., -2./30., -3./30., -4./30.), f.pow (-1));
+      f = new Quaternion (2., 3., 6., 24.);
+      assertEquals ("2+3i+6j+24k to the power -1 is wrong",
+         new Quaternion (0.0032, -0.0048, -0.0096, -0.0384), f.pow (-1));
+   }
+
+   @Test (timeout=1000)
+   public void testPowPositive() {
+      Quaternion f = new Quaternion (1., 2., 3., 4.);
+      assertEquals ("1+2i+3j+4k to the power 2 is wrong",
+         new Quaternion (-28., 4., 6., 8.), f.pow (2));
+      assertEquals ("1+2i+3j+4k to the power 3 is wrong",
+         new Quaternion (-86., -52., -78., -104.), f.pow (3));
+      assertEquals ("Do not change the argument of pow",
+         new Quaternion (1., 2., 3., 4.), f);
+      f = new Quaternion (0., 1., 0., 0.);
+      assertEquals ("i to the power 2 must be -1",
+         new Quaternion (-1., 0., 0., 0.), f.pow (2));
+      assertEquals ("i to the power 3 must be -i",
+         new Quaternion (0., -1., 0., 0.), f.pow (3));
+      assertEquals ("i to the power 4 must be 1",
+         new Quaternion (1., 0., 0., 0.), f.pow (4));
+   }
+
+   @Test (timeout=1000)
+   public void testPowNegative() {
+      Quaternion f = new Quaternion (1., 2., 3., 4.);
+      assertEquals ("1+2i+3j+4k to the power -2 is wrong",
+         new Quaternion (-28./900., -4./900., -6./900., -8./900.), f.pow (-2));
+      assertEquals ("1+2i+3j+4k to the power -3 is wrong",
+         new Quaternion (-86./27000., 52./27000., 78./27000., 104./27000.),
+         f.pow (-3));
+      f = new Quaternion (0., 0., 1., 0.);
+      assertEquals ("j to the power -2 must be -1",
+         new Quaternion (-1., 0., 0., 0.), f.pow (-2));
+      assertEquals ("j to the power -3 must be j",
+         new Quaternion (0., 0., 1., 0.), f.pow (-3));
+   }
+
+   @Test (expected=RuntimeException.class)
+   public void testZeroPowMinusOne() {
+      Quaternion f = new Quaternion (0., 0., 0., 0.);
+      f.pow (-1);
+   }
+
+   @Test (expected=RuntimeException.class)
+   public void testZeroPowNegative() {
+      Quaternion f = new Quaternion (0., 0., 0., 0.);
+      f.pow (-3);
+   }
+
+}

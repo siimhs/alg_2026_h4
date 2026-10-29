@@ -377,6 +377,28 @@ public class Quaternion {
       return Math.sqrt (real * real + iPart * iPart + jPart * jPart + kPart * kPart);
    }
 
+   /** Integer power of the quaternion.
+    *     pow(0) = 1, pow(1) = copy of this, pow(-1) = inverse(),
+    *     pow(n) = this*pow(n-1) for n &gt; 1, pow(-n) = inverse(pow(n)).
+    * @param n exponent
+    * @return quaternion <code>this</code> raised to the power n
+    * @throws ArithmeticException if <code>this</code> is zero and n is negative
+    */
+   public Quaternion pow (int n) {
+      if (n < 0 && isZero())
+         throw new ArithmeticException ("Cannot raise a zero quaternion ("
+            + this + ") to a negative power " + n + ": division by zero");
+      if (n == 0)
+         return new Quaternion (1., 0., 0., 0.);
+      if (n == 1)
+         return new Quaternion (real, iPart, jPart, kPart);
+      if (n == -1)
+         return inverse();
+      if (n > 1)
+         return times (pow (n - 1));
+      return pow (-n).inverse();
+   }
+
    /** Comparison of real numbers with tolerance DELTA.
     * @param x first number
     * @param y second number
@@ -447,6 +469,8 @@ public class Quaternion {
       System.out.println ("divideByRight: " + arv1.divideByRight (arv2));
       System.out.println ("divideByLeft: " + arv1.divideByLeft (arv2));
       System.out.println ("dotMult: " + arv1.dotMult (arv2));
+      System.out.println ("pow(3): " + arv1.pow (3));
+      System.out.println ("pow(-2): " + arv1.pow (-2));
       System.out.println ("exponent form: "
          + valueOf ("-2.0e-3-4.0e-1i-5.0e-2j-6.0e-3k"));
    }
